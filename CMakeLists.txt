@@ -84,11 +84,13 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
     CXX_${TOKENIZERS_CPP_CARGO_TARGET}=${ANDROID_TOOLCHAIN_ROOT}/bin/${TOKENIZERS_CPP_CARGO_TARGET}${ANDROID_NATIVE_API_LEVEL}-clang++
   )
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  if(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+  string(TOUPPER "${CMAKE_SYSTEM_PROCESSOR}" _proc_upper)
+  if(_proc_upper STREQUAL "ARM64" OR _proc_upper STREQUAL "AARCH64")
     set(TOKENIZERS_CPP_CARGO_TARGET aarch64-pc-windows-msvc)
   else()
     set(TOKENIZERS_CPP_CARGO_TARGET x86_64-pc-windows-msvc)
   endif()
+  unset(_proc_upper)
 endif()
 
 if(WIN32)
@@ -123,7 +125,7 @@ add_subdirectory(msgpack)
 
 option(MLC_ENABLE_SENTENCEPIECE_TOKENIZER "Enable SentencePiece tokenizer" ON)
 
-if(MSVC)
+if(WIN32)
   set(TOKENIZERS_RUST_LIB "${TOKENIZERS_CPP_CARGO_BINARY_DIR}/tokenizers_c.lib")
 else()
   set(TOKENIZERS_RUST_LIB "${TOKENIZERS_CPP_CARGO_BINARY_DIR}/libtokenizers_c.a")
